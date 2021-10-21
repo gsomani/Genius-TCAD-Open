@@ -158,7 +158,7 @@ int main(int argc, char ** args)
 
   // performace log flag
   PetscBool     log_flg;
-  PetscOptionsHasName(PETSC_NULL,"-p", &log_flg);
+  PetscOptionsHasName(PETSC_NULL, NULL, "-p", &log_flg);
   if(!log_flg)
     perflog.disable_logging();
 
@@ -166,7 +166,7 @@ int main(int argc, char ** args)
   {
     PetscBool     file_flg;
     char *petsc_arg_buffer = new char[1024];
-    PetscOptionsGetString(PETSC_NULL, "-i", petsc_arg_buffer, 1023, &file_flg);
+    PetscOptionsGetString(PETSC_NULL, NULL, "-i", petsc_arg_buffer, 1023, &file_flg);
     // no input file? exit...
     if( !file_flg )
     {
@@ -180,7 +180,7 @@ int main(int argc, char ** args)
 
   {
     PetscBool     experiment_code_flg;
-    PetscOptionsHasName(PETSC_NULL,"-e", &experiment_code_flg);
+    PetscOptionsHasName(PETSC_NULL, NULL, "-e", &experiment_code_flg);
     if(experiment_code_flg) Genius::set_experiment_code(false);
   }
 

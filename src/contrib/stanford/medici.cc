@@ -334,14 +334,14 @@ bool MediciTIF::read(std::string &err)
   // build Accept and Donor when not exist
   if( _version != "TMA" && !_sol_head.has_solution("Accept") && !_sol_head.has_solution("Donor") )
   {
-    if(_sol_head.has_solution("Net")  &&  _sol_head.has_solution("Total") )
+    if(_sol_head.has_solution("Net_Doping")  &&  _sol_head.has_solution("Total_Doping") )
     {
       _sol_head.sol_num += 2;
       _sol_head.sol_name_array.push_back("Accept");
       _sol_head.sol_name_array.push_back("Donor");
 
-      unsigned int net_index = _sol_head.solution_index("Net");
-      unsigned int tot_index = _sol_head.solution_index("Total");
+      unsigned int net_index = _sol_head.solution_index("Net_Doping");
+      unsigned int tot_index = _sol_head.solution_index("Total_Doping");
 
       for(unsigned int n=0; n<_sol_data.size(); ++n)
       {
@@ -424,9 +424,7 @@ void MediciTIF::export_tif(const std::string & file) const
     time_t          _time;
     time ( &_time );
 
-    fout << "h TIF V1.2.1 created by Genius, Copyright (C) by Cogenda Pte. Ltd. Date: " << ctime ( &_time ) ; // ctime with '\n'
-    fout << "cd GEN          blnk               blnk          blnk        cart2D    1.00000E+00  0.00000E+00"  << '\n';
-    fout << "cg   3.00000E+02" << '\n';
+    fout << "h TIF " << ctime ( &_time ) ; // ctime with '\n'
 
     //write point
     for ( unsigned int i=0; i<_nodes.size(); ++i )
@@ -445,8 +443,7 @@ void MediciTIF::export_tif(const std::string & file) const
       fout<< 'e'
       << std::setw ( 8 ) << _edges[i].index+1    << "   "
       << std::setw ( 8 ) << _edges[i].point1 + 1 << "   "
-      << std::setw ( 8 ) << _edges[i].point2 + 1 << "   "
-      << 0 << '\n';
+      << std::setw ( 8 ) << _edges[i].point2 + 1 << "\n";
     }
     //fout<<'\n';
 

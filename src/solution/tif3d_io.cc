@@ -400,7 +400,7 @@ void TIF3DIO::read (const std::string& filename)
     const std::string & solname = head.sol_name_array[i];
 
     if(solname == "Acceptor" || solname == "Donor") continue;
-    if(solname == "Net" || solname == "Total")      continue;
+    if(solname == "Net_Doping" || solname == "Total_Doping")      continue;
     if(solname == "mole_x" || solname == "mole_y")  continue;
 
     const std::string & solunit = head.sol_unit_array[i];

@@ -284,7 +284,7 @@ void FVM_LinearSolver::clear_linear_data()
   // clear petsc options
   std::map<std::string, std::string>::const_iterator it = petsc_options.begin();
   for(; it != petsc_options.end(); ++it)
-    PetscOptionsClearValue(it->first.c_str());
+    PetscOptionsClearValue(NULL, it->first.c_str());
 }
 
 
@@ -862,12 +862,12 @@ int FVM_LinearSolver::set_petsc_option(const std::string &key, const std::string
 
   // if the option has been set in command line
   PetscBool  set;
-  PetscOptionsHasName(NULL, ukey.c_str(), &set);
+  PetscOptionsHasName(NULL, NULL, ukey.c_str(), &set);
   if(set) return 0;
 
   // set the option
   petsc_options[ukey] = value;
-  return PetscOptionsSetValue(ukey.c_str(), value.c_str());
+  return PetscOptionsSetValue(NULL, ukey.c_str(), value.c_str());
 }
 
 

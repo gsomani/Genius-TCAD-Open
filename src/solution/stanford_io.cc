@@ -935,10 +935,12 @@ void STIFIO::write (const std::string& filename)
     if(region->type() != SemiconductorRegion) continue;
 
     region->region_node(region_nodes_map[region->name()]);
-    region->get_variable_data("Na", POINT_CENTER, region_solution_map[region->name()]["Na"]) ;
     region->get_variable_data("Nd", POINT_CENTER, region_solution_map[region->name()]["Nd"]) ;
-    region->get_variable_data("mole_x", POINT_CENTER, region_solution_map[region->name()]["mole_x"]);
-    region->get_variable_data("mole_y", POINT_CENTER, region_solution_map[region->name()]["mole_y"]);
+    region->get_variable_data("Na", POINT_CENTER, region_solution_map[region->name()]["Na"]) ;
+    region->get_variable_data("potential", POINT_CENTER, region_solution_map[region->name()]["potential"]) ;
+    region->get_variable_data("electron", POINT_CENTER, region_solution_map[region->name()]["electron"]) ;
+    region->get_variable_data("hole", POINT_CENTER, region_solution_map[region->name()]["hole"]) ;
+    region->get_variable_data("temperature", POINT_CENTER, region_solution_map[region->name()]["temperature"]) ;
   }
 
 
@@ -1101,15 +1103,19 @@ void STIFIO::write (const std::string& filename)
     }
 
     StanfordTIF::SolHead_t & sol_head = tif_writer->sol_head();
-    sol_head.sol_num = 4;
-    sol_head.sol_name_array.push_back("Net");
-    sol_head.sol_name_array.push_back("Total");
-    sol_head.sol_name_array.push_back("mole_x");
-    sol_head.sol_name_array.push_back("mole_y");
-    sol_head.sol_unit_array.push_back("cm^-3");
-    sol_head.sol_unit_array.push_back("cm^-3");
-    sol_head.sol_unit_array.push_back("1");
-    sol_head.sol_unit_array.push_back("1");
+    sol_head.sol_num = 6;
+    sol_head.sol_name_array.push_back("Total_Doping");
+    sol_head.sol_name_array.push_back("Net_Doping");
+    sol_head.sol_name_array.push_back("Electron");
+    sol_head.sol_name_array.push_back("Hole");
+    sol_head.sol_name_array.push_back("Potential");
+    sol_head.sol_name_array.push_back("Temperature");
+    sol_head.sol_unit_array.push_back("cm^{-3}");
+    sol_head.sol_unit_array.push_back("cm^{-3}");
+    sol_head.sol_unit_array.push_back("cm^{-3}");
+    sol_head.sol_unit_array.push_back("cm^{-3}");
+    sol_head.sol_unit_array.push_back("V");
+    sol_head.sol_unit_array.push_back("T");
 
     for(unsigned int r=0; r<system.n_regions(); r++)
     {
@@ -1117,20 +1123,24 @@ void STIFIO::write (const std::string& filename)
       if(region->type() != SemiconductorRegion) continue;
 
       const std::vector<unsigned int> & nodes = region_nodes_map[region->name()];
-      const std::vector<PetscScalar> & na = region_solution_map[region->name()]["Na"];
       const std::vector<PetscScalar> & nd = region_solution_map[region->name()]["Nd"];
-      const std::vector<PetscScalar> & mx = region_solution_map[region->name()]["mole_x"];
-      const std::vector<PetscScalar> & my = region_solution_map[region->name()]["mole_y"];
+      const std::vector<PetscScalar> & na = region_solution_map[region->name()]["Na"];
+      const std::vector<PetscScalar> & V = region_solution_map[region->name()]["potential"];
+      const std::vector<PetscScalar> & T = region_solution_map[region->name()]["temperature"];
+      const std::vector<PetscScalar> & n = region_solution_map[region->name()]["electron"];
+      const std::vector<PetscScalar> & p = region_solution_map[region->name()]["hole"];
 
-      for(unsigned int n=0; n<nodes.size(); ++n)
+      for(unsigned int i=0; i<nodes.size(); ++i)
       {
         StanfordTIF::SolData_t sol;
-        sol.index = nodes[n];
+        sol.index = nodes[i];
         sol.material = region->material();
-        sol.data_array.push_back(nd[n]-na[n]);
-        sol.data_array.push_back(nd[n]+na[n]);
-        sol.data_array.push_back(mx[n]);
-        sol.data_array.push_back(my[n]);
+        sol.data_array.push_back(nd[i]+na[i]);
+        sol.data_array.push_back(nd[i]-na[i]);
+        sol.data_array.push_back(n[i]);
+        sol.data_array.push_back(p[i]);
+        sol.data_array.push_back(V[i]);
+        sol.data_array.push_back(T[i]);
 
         tif_writer->sol_data_array().push_back(sol);
       }

@@ -100,7 +100,7 @@ def configure(conf):
   conf.env.append_value('DEFINES_VERSION', 'PACKAGE_VERSION="%s"' % version_str)
 
   # general C flags
-  ccflags_common, cxxflags_common, fcflags_common = ([],[],[])
+  ccflags_common, cxxflags_common, fcflags_common = ([],['-std=c++14'],[])
   ccflags_optimize, cxxflags_optimize, fcflags_optimize=([],[],[])
   ldflags_common=[]
   ldflags_shlib=[]
@@ -601,7 +601,7 @@ stringstream message; message << "Hello"; return 0;
       conf.fatal('Could not find petscversion.h, or it can not be parsed.')
     print 'Using Petsc version %s' % version
 
-    petsc_vars=Utils.str_to_dict(Utils.readf(os.path.join(arch_dir, 'conf/petscvariables')))
+    petsc_vars=Utils.str_to_dict(Utils.readf(os.path.join(arch_dir, 'lib/petsc/conf/petscvariables')))
 
     for v in ['PACKAGES_INCLUDES', 'PETSC_CC_INCLUDES']:
       if not petsc_vars.has_key(v): continue
